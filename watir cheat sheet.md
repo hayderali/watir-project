@@ -1,101 +1,110 @@
---------- Selenium Cheat Sheet ---------
+--- Watir Cheat Sheet ---
 
-driver = Selenium::Webdriver.for
-:: -> from the class/module
-. call the method
+http://www.rubydoc.info/gems/watir-webdriver/frames
+  
+WATIR WILL BE USED IN FINAL PROJECT
 
-# Loading Selenium
+--- What is Watir ---
 
-irb 
-require 'selenium-webdriver'
+Browser API for Selenium
+Nice DSL
+PageObject available (PageObject is a Gem)
+Built for Ruby
+Industry Standard
 
-# Navigating a page
-browser = Selenium:: WebDriver.for :firefox
-browser.get "http://www.google.com"
-					#or
-browser.navigate.to "http://www.google.com"
-browser.title
-browser.page_source
-browser.page_source.match /Hello/
-browser.execute_script "alert('Hello');"
+#Start Watir
+
+require 'watir'
+browser = Watir::Browser.new :firefox
+browser.goto "http://google.com"
+
+#Methods For browser
+  .text  <- prints all the text from the page
+  .title
+  .refresh
+  .html <- gives html of the page
+  .status <- print out status
+  .text <- print out all the text from the page
+  .text.include? 'Hello'
+    include? -> checks a string with an array of strings 
+	.driver.find_elements (selenium methods can be applied in watir)
+  .p shows object file
+  .p.text <- obtains text from that p tag
+
+#Adding "s" makes tags into a collection 
+  .x's will get all of them (and makes them all into collections)
+  .ps <- paragraph "collecton" of all p tag
+  .ps[0]
+    .ps[0].text
+  .input/.textfield
+    .text_field name: 'name'
+    .lis id: /^foo.*/ .* 1 character of anything.
+    .lis class: /^qa-.*/
+ 
+#Text Field Methods 
+tf = browser.text_field name: 'name'
+  tf.flash (blinks)
+  tf.set "hello" (sets to hello)
+  tf.value (prints out the value)"
+  .id = prints out the id 
+  .exists? (it check the html file not the actual page diplay)
+  tf.visibile? (visibility false)
+  .readonly? (checks to see if a xxx is only readable)
+
+#Button Methods
+b = browser.button text: "A Button"
+  use id and elements but if cannot be find use "name:"
+  
+  .type
+  .click
+  .id
+  .flash
+  .when_present.click (x.when_present.x will work) 
+
+#Check Box Methods  
+cb = browser.checkbox id 'checkbox'
+  cb.set tick  
+  cb.clear untick
+
+#Dropdown 
+dropdown = browser.select_list :name, "select-choice"
+-clicking on a link
+  browser.select_list(:name => 'name').clear
+  puts browser.select_list(:name => 'name').options
+  browser.select_list(:name => 'name').select 'Option 1'
+
+browser.a(text: "About").click
+
+#On lacedreamon contact forms
+table = browser.table
+table[0] <- row 
+table[0][0] <- row and column
+  .text can be called on all of them
+
+#CSS Selectors
+Using Element to do css
+browser.element css: ".foo"
+browser.element (css: ".page-header").html
+browser.element(css: "form")
+
+#Placing buttons in an array
+button = browser.buttons
+button.size
+
+#Implicit Waiting
+browser.driver.manage.timouts.imp
+
+--setting it
+
+browser.driver.manage.timemouts.implicit_wait = 3
 
 
-# How to find methods on methods
+#Explicit Wait
+--on google web form page
+browser.text_field(id: 'entry_1000').wait_until_present
+  "" .wait_until_present.set "foo" 
 
-browser.methods - Object.new.methods
-
-
-# Assigning variable for sections of the page
-
-a = browser.find_element id: "x"
-a = find_elements tag_name: "input"
-
-
-# Finding elements
-
-a = browser.find_element name: "something"
-a = browser.find_element id: "someid"
-a = browser.find_element css: "h1 .foo" # This is awesome
-a = browser.find_element class: "foo"
-a = browser.find_element xpath: "//h2[@class='someclass']"
-a = browser.find_element tag_name: "tagname"
-?
-a = browser.find_elements tag_name: "tagname" # Returns an Array of Objects
-
-
-#  Finding elements via css 
-# <div id="food">
-#   <span class="dairy">milk</span>
-#   <span class="dairy aged">cheese</span>
-# </div>
-element = driver.find_element(:css, #food span.dairy)
-	
-# Listed on elements methods
-
-a.location <- x,y pos
-a.location_once_scrolled_into_view <- after scrolling gives you x,y pos
-a.size
-a.displayed?
-a.text
-a.attribute "class"
-a.click
-a.send_keys "Hello"
-a.selected? # For Checkboxes and Radio Buttons
-a.submit # Called on any element in a form will submit the form.
-
-	
-# Wait methods 	
-
-wait = Selenium::WebDriver::Wait.new(timeout:51)   <- miliseconds
-a = wait.until {browser.find_element(tag_name: "h1")}
-
-# Explain that the until method takes a block of code to execute and returns the last line's result.
-# We can store that in a variable.
-?
-a = wait.until do
-  browser.find_element(tag_name: "h1")
+#Wait until block returns true
+Watir::Wait.until do
+  browser.text.include? 'Thank You'
 end
-?
-
-puts "Test Passed! Found H1" if wait.until do
-  browser.find_element(tag_name: "h1").text.match /HTML/
-end
-
-
-# Deleting Cookies
-
-# You can delete cookies in 2 ways
-# By name
-	driver.manage.delete_cookie("CookieName")
-# Or all of them
-	driver.manage.delete_all_cookies
-
-# Closing browser
-
-browser.quit
-	
-## exercise - load option 3 ##
-
-options = a.find_elements(tag_name: "option")
-options.each {|o| o.click if o.text == "Choice 3" }
-

@@ -26,8 +26,15 @@ message.send_keys("Watir automation")
 submit_button = browser.button(class: 'create_post_button')
 submit_button.click
 
-Watir::Wait.until do
-	browser.text.include? "Watir automation"
-end
+browser.driver.manage.timemouts.implicit_wait = 10
+browser.goto "http://www.deepesthologramtyphoon.tumblr.com/"
+
+# Watir::Wait.until do
+	# browser.text.include? "Watir automation"
+	# puts "test was sucessful !!!"
+# end
+
+browser.goto "http://www.tumblr.com"
+
 
 #browser.close
